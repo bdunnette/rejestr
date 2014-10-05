@@ -1,0 +1,81 @@
+<head>
+  <title>Rejestr</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+
+<body>
+</body>
+
+<template name="layout">
+  <div class="container-fluid">
+    {{>yield}}
+  </div>
+</template>
+
+<template name="listTransactions">
+  <h2>Transactions:</h2>
+  <ul>
+  {{#each transactions}}
+  <li><a href="{{pathFor 'viewTransaction'}}">{{dateTime}}: {{customer.name.given}} {{customer.name.family}} {{customer.email}}</a> <button class="btn btn-danger btn-xs remove-transaction">Delete</button></li>
+  {{/each}}
+  </ul>
+  <button class="btn btn-primary add-transaction">Add Transaction</button>
+  
+  <h2>Customers:</h2>
+  <ul>
+  {{#each customers}}
+  <li><a href="{{pathFor 'viewCustomer'}}">{{name.family}}, {{name.given}} {{email}}</a> <button class="btn btn-danger btn-xs remove-customer">Delete</button></li>
+  {{/each}}
+  </ul>
+  <button class="btn btn-primary add-customer">Add Customer</button>
+  
+  <h2>Products:</h2>
+  <ul>
+  {{#each products}}
+  <li><a href="{{pathFor 'editProduct'}}">{{name}} {{salePrice}}</a> <button class="btn btn-danger btn-xs remove-product">Delete</button></li>
+  {{/each}}
+  </ul>
+  <button class="btn btn-primary add-product">Add Product</button>
+</template>
+
+<template name="viewTransaction">
+  {{#with transaction}}
+  <h2>Transaction {{_id}}</h2>
+  <h3>{{dateTime}}</h3>
+  <h3>{{customer.name}} {{customer.email}}</h3>
+  {{/with}}
+</template>
+
+<template name="editTransaction">
+  <h2>Transaction {{transaction._id}}</h2>
+  <label>Date/Time:</label><input id="dateTime" type=datetime value="{{transaction.dateTime}}">
+  <label>Customer:</label>
+  <select id="customer">
+    <option value=""></option>
+    {{#each customers}}
+    <!--Since we're in a 'customer' context, we'll have to get the parent context with '..'-->
+    <option value="{{_id}}" selected={{isSelected ../transaction.customer._id}}>{{name.family}}, {{name.given}}</option>
+    {{/each}}
+  </select>
+      <label for="name" class="col-sm-2 control-label">
+      Name
+      </label>
+      <input type="text" class="form-control formitem"
+          id="itemName" placeholder="item name"
+          value="{{name}}">
+      <label for="quantity" class="col-sm-2 control-label">
+      Quantity
+      </label>
+      <input type="number" class="form-control formitem"
+          id="itemQuantity" placeholder="quantity"
+          value="{{quantity}}">
+    <button id="addItem"
+        class="btn btn-default">
+      Add Item</button>
+  <ul>
+  {{#each transaction.items}}
+  <li>{{.}}</li>
+  {{/each}}
+  </ul>
+</template>
