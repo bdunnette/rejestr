@@ -20,7 +20,7 @@ Template.listTransactions.events({
   },
   
   'click .add-product': function () {
-    Products.insert({name: chance.word(), salePrice: chance.dollar({max: 500})});
+    Products.insert({name: chance.word(), salePrice: chance.floating({fixed: 2, min: 0, max: 300})});
   },
   
   'click .remove-product': function() {
@@ -35,12 +35,33 @@ Template.editTransaction.events({
     Transactions.update({_id: this.transaction._id}, {$set: {customer: customer}});
   },
   
+  'change #product': function (event) {
+    var product = Products.findOne({_id: event.target.value});
+    $("#eachPrice").val(product.salePrice);
+    var itemQuantity = $("#itemQuantity").val();
+    var totalPrice = product.salePrice * itemQuantity;
+    $("#totalPrice").val(totalPrice);
+  },
+  
   'click #addItem': function(event) {
-    console.log(this);
-    var itemName = $('#itemQuantity').value();
-    var itemQuantity = $('#itemQuantity').value();
-    console.log(itemName, itemQuantity);
-    Transactions.update({_id: this.transaction._id}, {$push: {items: {name: itemName, quantity: itemQuantity}}});
+    var itemId = $("#product").val();
+    var product = Products.findOne({_id: itemId});
+    var itemQuantity = $("#itemQuantity").val();
+    var eachPrice = $("#eachPrice").val();
+    var totalPrice = $("#totalPrice").val();
+    Transactions.update({_id: this.transaction._id}, {$push: {items: {id: itemId, name: product.name, quantity: itemQuantity, price: {each: eachPrice, total: totalPrice}}}});
+  },
+  
+  'change #eachPrice': function(event) {
+    var itemQuantity = $("#itemQuantity").val();
+    var totalPrice = event.target.value * itemQuantity;
+    $("#totalPrice").val(totalPrice);
+  },
+  
+  'change #itemQuantity': function(event) {
+    var eachPrice = $("#eachPrice").val();
+    var totalPrice = event.target.value * eachPrice;
+    $("#totalPrice").val(totalPrice);
   }
 });
 

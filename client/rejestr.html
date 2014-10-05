@@ -43,8 +43,30 @@
   {{#with transaction}}
   <h2>Transaction {{_id}}</h2>
   <h3>{{dateTime}}</h3>
-  <h3>{{customer.name}} {{customer.email}}</h3>
+  <h3>{{customer.name.given}} {{customer.name.family}} {{customer.email}}</h3>
+  {{> itemTable}}
   {{/with}}
+</template>
+
+<template name="itemTable">
+  <table class="table table-striped">
+  <thead>
+    <th>Item</th>
+    <th>Quantity</th>
+    <th>Item Price</th>
+    <th>Total Price</th>
+  </thead>
+  <tbody>
+    {{#each items}}
+    <tr>
+      <td>{{name}}</td>
+      <td>{{quantity}}</td>
+      <td>{{price.each}}</td>
+      <td>{{price.total}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+  </table>
 </template>
 
 <template name="editTransaction">
@@ -58,24 +80,39 @@
     <option value="{{_id}}" selected={{isSelected ../transaction.customer._id}}>{{name.family}}, {{name.given}}</option>
     {{/each}}
   </select>
-      <label for="name" class="col-sm-2 control-label">
-      Name
+      <label for="product" class="col-sm-2 control-label">
+      Product
       </label>
-      <input type="text" class="form-control formitem"
-          id="itemName" placeholder="item name"
-          value="{{name}}">
-      <label for="quantity" class="col-sm-2 control-label">
+      <select id="product">
+        <option value=""></option>
+        {{#each products}}
+        <option value="{{_id}}">{{name}}</option>
+        {{/each}}
+      </select>
+      <label for="itemQuantity" class="col-sm-2 control-label">
       Quantity
       </label>
       <input type="number" class="form-control formitem"
           id="itemQuantity" placeholder="quantity"
-          value="{{quantity}}">
+          value="1">
+      <label for="eachPrice" class="col-sm-2 control-label">
+      Price Per Item
+      </label>
+      <input type="number" step="0.01" class="form-control formitem"
+          id="eachPrice" placeholder="price"
+          value="{{eachPrice}}">
+      <label for="itemExtendedPrice" class="col-sm-2 control-label">
+      Total Price
+      </label>
+      <input type="number" step="0.01" class="form-control formitem"
+          id="totalPrice" placeholder="price"
+          value="{{totalPrice}}">
     <button id="addItem"
         class="btn btn-default">
       Add Item</button>
   <ul>
-  {{#each transaction.items}}
-  <li>{{.}}</li>
-  {{/each}}
+  {{#with transaction}}
+  {{> itemTable}}
+  {{/with}}
   </ul>
 </template>

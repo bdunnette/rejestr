@@ -39,9 +39,11 @@ Router.map(function () {
     data: function () {
       var transaction = Transactions.findOne({_id: this.params._id});
       var customers = Parties.find();
+      var products = Products.find();
       return {
         transaction: transaction,
-        customers: customers
+        customers: customers,
+        products: products
       };
     }
   });
